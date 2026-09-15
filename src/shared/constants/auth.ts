@@ -1,0 +1,33 @@
+export const AUTH_COPY = {
+  brand: 'Розумна Годівничка',
+  story: {
+    eyebrow: 'SMART CARE / 01',
+    kicker: 'Годуй вчасно. Живи спокійніше.',
+    heading: 'Турбота, яка працює сама.',
+    description: 'Керуйте годівничкою дистанційно та залишайтеся спокійними, де б ви не були.',
+  },
+  form: {
+    eyebrow: 'ВХІД ДО СИСТЕМИ',
+    loginHeading: 'З поверненням.',
+    signupHeading: 'Створіть акаунт.',
+    loginDescription: 'Увійдіть, щоб перевірити свою годівничку.',
+    signupDescription: 'Ваш улюбленець вже чекає на турботу.',
+    nameLabel: "Ім'я",
+    namePlaceholder: 'Олексій',
+    emailLabel: 'Email',
+    emailPlaceholder: 'you@example.com',
+    passwordLabel: 'Пароль',
+    passwordPlaceholder: 'Не менше 8 символів',
+    loginAction: 'УВІЙТИ',
+    signupAction: 'ЗАРЕЄСТРУВАТИСЯ',
+    pending: 'ПЕРЕВІРЯЄМО...',
+    google: 'Продовжити з Google',
+  },
+  errors: {
+    shortPassword: 'Пароль має містити щонайменше 8 символів.',
+    shortName: "Вкажіть ім'я довжиною щонайменше 2 символи.",
+    duplicateEmail: 'Користувач із таким email вже існує.',
+    invalidCredentials: 'Невірний email або пароль.',
+    googleUnavailable: 'Google-вхід буде підключено після додавання OAuth backend.',
+  },
+} as const
