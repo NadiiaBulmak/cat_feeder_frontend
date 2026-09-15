@@ -10,11 +10,8 @@ export const getFeeder = async (id: string) => {
 export const sendFeederCommand = async (
   command: 'open' | 'close',
 ) => {
-  const response = await apiClient.post(
-    `/feeders/${env.feederId}/command`,
-    {
-      command,
-    },
+  const response = await apiClient.patch(
+    `/feeders/${env.feederId}/${command}`
   );
 
   return response.data;
