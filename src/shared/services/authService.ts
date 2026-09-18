@@ -1,54 +1,95 @@
+import { apiClient } from '../../api/client'
 import { AUTH_COPY } from '../constants/auth'
-import { STORAGE_KEYS } from '../constants/storage'
 import type { AuthService } from '../interfaces/auth'
 import type { AuthResult, User } from '../types/auth'
 
-function readUsers(): User[] {
-  try {
-    return JSON.parse(localStorage.getItem(STORAGE_KEYS.users) ?? '[]') as User[]
-  } catch {
-    return []
-  }
-}
+const AUTH_TOKEN_KEY = 'access_token'
+const USER_SESSION_KEY = 'user'
 
 function normalizeEmail(email: string) {
   return email.trim().toLowerCase()
 }
 
-export const authService: AuthService = {
-  login(email, password): AuthResult {
-    const user = readUsers().find(
-      (candidate) => candidate.email === normalizeEmail(email) && candidate.password === password,
-    )
+function persistSession(user: User, token: string) {
+  sessionStorage.setItem(AUTH_TOKEN_KEY, token)
+  sessionStorage.setItem(USER_SESSION_KEY, JSON.stringify(user))
+}
 
-    if (!user) return { success: false, message: AUTH_COPY.errors.invalidCredentials }
-    localStorage.setItem(STORAGE_KEYS.session, JSON.stringify(user))
-    return { success: true, user }
+export const authService: AuthService = {
+  async login(email, password): Promise<AuthResult> {
+    try {
+      const response = await apiClient.post('/auth/login', {
+        email: normalizeEmail(email),
+        password,
+      })
+
+      const data = response.data ?? {}
+      const token = data.access_token ?? data.token
+      const user = data.user as User | undefined
+
+      if (!user || !token) {
+        return { success: false, message: AUTH_COPY.errors.invalidCredentials }
+      }
+
+      persistSession(user, token)
+      return { success: true, user }
+    } catch (error: unknown) {
+      const message =
+        typeof error === 'object' && error !== null && 'response' in error
+          ? (error as { response?: { data?: { message?: string } } }).response?.data?.message
+          : undefined
+
+      return {
+        success: false,
+        message: message || AUTH_COPY.errors.invalidCredentials,
+      }
+    }
   },
 
-  signup(name, email, password): AuthResult {
-    const users = readUsers()
-    const normalizedEmail = normalizeEmail(email)
+  async signup(name, email, password): Promise<AuthResult> {
+    try {
+      const response = await apiClient.post('/auth/register', {
+        name: name.trim(),
+        email: normalizeEmail(email),
+        password,
+      })
 
-    if (users.some((user) => user.email === normalizedEmail)) {
-      return { success: false, message: AUTH_COPY.errors.duplicateEmail }
+      const data = response.data ?? {}
+      const token = data.access_token ?? data.token
+      const user = data.user as User | undefined
+
+      if (!user || !token) {
+        return { success: false, message: AUTH_COPY.errors.duplicateEmail }
+      }
+
+      persistSession(user, token)
+      return { success: true, user }
+    } catch (error: unknown) {
+      const message =
+        typeof error === 'object' && error !== null && 'response' in error
+          ? (error as { response?: { data?: { message?: string } } }).response?.data?.message
+          : undefined
+
+      return {
+        success: false,
+        message: message || AUTH_COPY.errors.duplicateEmail,
+      }
     }
-
-    const user = { name: name.trim(), email: normalizedEmail, password }
-    localStorage.setItem(STORAGE_KEYS.users, JSON.stringify([...users, user]))
-    localStorage.setItem(STORAGE_KEYS.session, JSON.stringify(user))
-    return { success: true, user }
   },
 
   getSession(): User | null {
     try {
-      return JSON.parse(localStorage.getItem(STORAGE_KEYS.session) ?? 'null') as User | null
+      const storedUser = sessionStorage.getItem(USER_SESSION_KEY)
+      return storedUser ? (JSON.parse(storedUser) as User) : null
     } catch {
       return null
     }
   },
 
   logout() {
-    localStorage.removeItem(STORAGE_KEYS.session)
+    sessionStorage.removeItem(AUTH_TOKEN_KEY)
+    sessionStorage.removeItem(USER_SESSION_KEY)
+    localStorage.removeItem(AUTH_TOKEN_KEY)
+    localStorage.removeItem(USER_SESSION_KEY)
   },
 }

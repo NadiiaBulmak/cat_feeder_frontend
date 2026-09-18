@@ -1,5 +1,4 @@
-import { apiClient } from '../api/client';
-import { env } from '../api/config';
+import { apiClient } from "../api/client";
 
 export const getFeeder = async (id: string) => {
   const response = await apiClient.get(`/feeders/${id}`);
@@ -8,11 +7,16 @@ export const getFeeder = async (id: string) => {
 };
 
 export const sendFeederCommand = async (
-  command: 'open' | 'close',
+  feederId: string,
+  command: "open" | "close",
 ) => {
-  const response = await apiClient.patch(
-    `/feeders/${env.feederId}/${command}`
-  );
+  const response = await apiClient.patch(`/feeders/${feederId}/${command}`);
+
+  return response.data;
+};
+
+export const getUserFeeders = async () => {
+  const response = await apiClient.get("/feeders/me");
 
   return response.data;
 };

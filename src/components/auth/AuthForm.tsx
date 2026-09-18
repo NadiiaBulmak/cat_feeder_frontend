@@ -17,21 +17,28 @@ export function AuthForm({ onSuccess }: AuthFormProps) {
   const [pending, setPending] = useState(false)
   const isSignup = stage === AUTH_STAGES.SIGNUP
 
-  const submit = (event: FormEvent<HTMLFormElement>) => {
+  const submit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     setError('')
     if (password.length < 8) return setError(AUTH_COPY.errors.shortPassword)
     if (isSignup && name.trim().length < 2) return setError(AUTH_COPY.errors.shortName)
 
     setPending(true)
-    window.setTimeout(() => {
+
+    try {
       const result = isSignup
-        ? authService.signup(name, email, password)
-        : authService.login(email, password)
+        ? await authService.signup(name, email, password)
+        : await authService.login(email, password)
+
+      if (result.success) {
+        onSuccess(result.user)
+        return
+      }
+
+      setError(result.message)
+    } finally {
       setPending(false)
-      if (result.success) onSuccess(result.user)
-      else setError(result.message)
-    }, 350)
+    }
   }
 
   const changeStage = () => {

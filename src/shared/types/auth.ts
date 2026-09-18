@@ -1,9 +1,9 @@
 export type AuthMode = 'login' | 'signup'
 
 export type User = {
-  name: string
+  name?: string
   email: string
-  password: string
+  password?: string
 }
 
 export type AuthResult =
