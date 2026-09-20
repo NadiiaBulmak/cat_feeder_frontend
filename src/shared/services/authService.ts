@@ -11,8 +11,8 @@ function normalizeEmail(email: string) {
 }
 
 function persistSession(user: User, token: string) {
-  sessionStorage.setItem(AUTH_TOKEN_KEY, token)
-  sessionStorage.setItem(USER_SESSION_KEY, JSON.stringify(user))
+  localStorage.setItem(AUTH_TOKEN_KEY, token)
+  localStorage.setItem(USER_SESSION_KEY, JSON.stringify(user))
 }
 
 export const authService: AuthService = {
@@ -79,7 +79,8 @@ export const authService: AuthService = {
 
   getSession(): User | null {
     try {
-      const storedUser = sessionStorage.getItem(USER_SESSION_KEY)
+      const storedUser =
+        sessionStorage.getItem(USER_SESSION_KEY) ?? localStorage.getItem(USER_SESSION_KEY)
       return storedUser ? (JSON.parse(storedUser) as User) : null
     } catch {
       return null

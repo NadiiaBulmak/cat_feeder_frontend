@@ -5,11 +5,11 @@ export async function login(email: string, password: string) {
   const data = response.data ?? {};
 
   if (data.access_token) {
-    sessionStorage.setItem("access_token", data.access_token);
+    localStorage.setItem("access_token", data.access_token);
   }
 
   if (data.user) {
-    sessionStorage.setItem("user", JSON.stringify(data.user));
+    localStorage.setItem("user", JSON.stringify(data.user));
   }
 
   return data;
