@@ -140,6 +140,7 @@ export function FeederDashboard({ user, onLogout }: FeederDashboardProps) {
                 {feeders.map((feeder) => {
                   const isOnline = isFeederOnline(feeder.lastPing);
                   const isSubmitting = submittingCommand?.feederId === feeder.id;
+                  console.log(feeder)
 
                   return (
                     <FeederRow
