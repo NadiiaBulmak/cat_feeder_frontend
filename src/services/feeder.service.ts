@@ -20,3 +20,9 @@ export const getUserFeeders = async () => {
 
   return response.data;
 };
+
+export const getDistance = async (id: string) => {
+    const response = await apiClient.get(`/feeders/${id}/distance`);
+
+  return response.data;
+}

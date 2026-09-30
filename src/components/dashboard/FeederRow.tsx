@@ -9,6 +9,7 @@ import {
 import { FeederControlButton } from "./FeederControlButton";
 import { triggerCamera } from "../../services/camera/triggerCamera";
 import { saveSnapshotToCloud } from "../../services/camera/savePhoto";
+import { getDistance } from "../../services/feeder.service";
 
 export function FeederRow({
   feeder,
@@ -30,9 +31,20 @@ export function FeederRow({
   const [photoUrl, setPhotoUrl] = useState<string | null>(null);
   const [currentBlob, setCurrentBlob] = useState<Blob | null>(null);
   const [photoError, setPhotoError] = useState<string | null>(null);
-  
+  const [distance, setDistance] = useState<number>(0);
+
   const [isSavingToCloud, setIsSavingToCloud] = useState(false);
   const [saveSuccessUrl, setSaveSuccessUrl] = useState<string | null>(null);
+
+  const loadDistance = async () => {
+    try {
+      const { distance } = await getDistance(feeder.deviceId);
+
+      setDistance(distance);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   const handleTakeSnapshot = async () => {
     if (!deviceId) return;
@@ -50,7 +62,7 @@ export function FeederRow({
 
     try {
       const url = await triggerCamera(deviceId);
-      
+
       const response = await fetch(url);
       const blob = await response.blob();
 
@@ -129,7 +141,7 @@ export function FeederRow({
         <div className="min-w-0 px-3 py-5">
           <span
             className={`inline-block max-w-full rounded-full px-2 py-1 text-[.52rem] font-black uppercase ${getStateClasses(
-              feeder.desiredState
+              feeder.desiredState,
             )}`}
           >
             {getStateLabel(feeder.desiredState)}
@@ -140,7 +152,7 @@ export function FeederRow({
           <div className="flex min-w-0 items-center gap-1">
             <span
               className={`inline-block max-w-full rounded-full px-2 py-1 text-[.52rem] font-black uppercase ${getStateClasses(
-                feeder.actualState
+                feeder.actualState,
               )}`}
             >
               {getStateLabel(feeder.actualState)}
@@ -254,7 +266,7 @@ export function FeederRow({
             </p>
             <span
               className={`mt-1 inline-block max-w-full rounded-full px-2 py-1 text-[.52rem] font-black uppercase ${getStateClasses(
-                feeder.desiredState
+                feeder.desiredState,
               )}`}
             >
               {getStateLabel(feeder.desiredState)}
@@ -266,7 +278,7 @@ export function FeederRow({
             </p>
             <span
               className={`mt-1 inline-block max-w-full rounded-full px-2 py-1 text-[.52rem] font-black uppercase ${getStateClasses(
-                feeder.actualState
+                feeder.actualState,
               )}`}
             >
               {getStateLabel(feeder.actualState)}
@@ -306,6 +318,13 @@ export function FeederRow({
           className="mt-2 flex h-9 w-full items-center justify-center gap-1.5 rounded-lg bg-[#e2e5df] px-3 text-xs font-extrabold uppercase text-[#4a544b] shadow-sm transition-colors hover:bg-[#d4d8d1] active:scale-[0.98] disabled:opacity-50"
         >
           <span className="text-sm">📸</span> Live Камера
+        </button>
+        <button
+          onClick={loadDistance}
+          // disabled={isPhotoLoading}
+          className="mt-2 flex h-9 w-full items-center justify-center gap-1.5 rounded-lg bg-[#e2e5df] px-3 text-xs font-extrabold uppercase text-[#4a544b] shadow-sm transition-colors hover:bg-[#d4d8d1] active:scale-[0.98] disabled:opacity-50"
+        >
+          Distance is {distance}
         </button>
       </article>
 
