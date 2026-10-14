@@ -38,7 +38,7 @@ export function FeederRow({
 
   const loadDistance = async () => {
     try {
-      const { distance } = await getDistance(feeder.deviceId);
+      const { distance } = await getDistance(feeder.deviceId!);
 
       setDistance(distance);
     } catch (error) {
@@ -175,9 +175,9 @@ export function FeederRow({
                 isOnline ? "bg-[#86a639]" : "bg-[#b6bbb3]"
               }`}
             />
-            <span className="text-[.6rem] font-bold text-[#657267]">
+            {/* <span className="text-[.6rem] font-bold text-[#657267]">
               {isOnline ? "Online" : "Offline"}
-            </span>
+            </span> */}
           </div>
         </div>
 
@@ -247,7 +247,7 @@ export function FeederRow({
               </p>
             </div>
           </div>
-          <div className="flex shrink-0 items-center gap-1.5">
+          {/* <div className="flex shrink-0 items-center gap-1.5">
             <span
               className={`size-2 rounded-full ${
                 isOnline ? "bg-[#86a639]" : "bg-[#b6bbb3]"
@@ -256,7 +256,7 @@ export function FeederRow({
             <span className="text-[.58rem] font-bold text-[#657267]">
               {isOnline ? "Online" : "Offline"}
             </span>
-          </div>
+          </div> */}
         </div>
 
         <div className="mt-4 grid grid-cols-2 gap-2">
@@ -286,14 +286,64 @@ export function FeederRow({
           </div>
         </div>
 
-        <div className="mt-2 flex min-w-0 items-center justify-between gap-3 rounded-lg bg-[#e6eadf] px-3 py-2.5">
+        <div className="mt-4 grid grid-cols-2 gap-2">
+          <div className="min-w-0 rounded-lg bg-[#e6eadf] p-2.5">
+            <p className="text-[.5rem] font-black uppercase tracking-[.08em] text-[#8a948c]">
+              Ble state
+            </p>
+            <span
+              className={`mt-1 inline-block max-w-full rounded-full px-2 py-1 text-[.52rem] font-black uppercase bg-white`}
+            >
+              {new Date(feeder.bleState?.lastSeen || 0).toLocaleString() || "—"}
+            </span>
+          </div>
+          <div className="min-w-0 rounded-lg bg-[#e6eadf] p-2.5">
+            <p className="text-[.5rem] font-black uppercase tracking-[.08em] text-[#8a948c]">
+              BLE RSSI
+            </p>
+            <span
+              className={`mt-1 inline-block max-w-full rounded-full px-2 py-1 text-[.52rem] font-black uppercase ${getStateClasses(
+                feeder.actualState,
+              )}`}
+            >
+              {feeder.bleState?.rssi}
+            </span>
+          </div>
+        </div>
+
+        <div className="mt-4 grid grid-cols-2 gap-2">
+          <div className="min-w-0 rounded-lg bg-[#e6eadf] p-2.5">
+            <p className="text-[.5rem] font-black uppercase tracking-[.08em] text-[#8a948c]">
+              Last distance
+            </p>
+            <span
+              className={`mt-1 inline-block max-w-full rounded-full px-2 py-1 text-[.52rem] font-black uppercase bg-white`}
+            >
+              {+feeder.lastDistance! / 10} cm
+            </span>
+          </div>
+          <div className="min-w-0 rounded-lg bg-[#e6eadf] p-2.5">
+            <p className="text-[.5rem] font-black uppercase tracking-[.08em] text-[#8a948c]">
+              Connected devices
+            </p>
+            <span
+              className={`mt-1 inline-block max-w-full rounded-full px-2 py-1 text-[.52rem] font-black uppercase ${getStateClasses(
+                feeder.actualState,
+              )}`}
+            >
+              {feeder.connectedDevices?.join(", ") || "—"}
+            </span>
+          </div>
+        </div>
+
+        {/* <div className="mt-2 flex min-w-0 items-center justify-between gap-3 rounded-lg bg-[#e6eadf] px-3 py-2.5">
           <span className="shrink-0 text-[.5rem] font-black uppercase tracking-[.08em] text-[#8a948c]">
             Last ping
           </span>
           <span className="break-words text-right text-[.58rem] font-bold leading-4 text-[#657267]">
             {formatDate(feeder.lastPing)}
           </span>
-        </div>
+        </div> */}
 
         <div className="mt-3 grid grid-cols-2 gap-2">
           <FeederControlButton

@@ -28,11 +28,20 @@ export type SubmittingCommand = {
   command: FeederCommandEnum;
 } | null;
 
+export interface BleState {
+  lastSeen: number;
+  rssi: number | null;
+}
+
 export type FeederRowProps = {
-  feeder: Pick<
-    FeederInfo,
-    "id" | "name" | "deviceId" | "desiredState" | "actualState" | "lastPing"
+  feeder: Partial<
+    FeederInfo & {
+      lastDistance: number | null;
+      bleState: BleState;
+      connectedDevices: string[];
+    }
   >;
+
   isOnline: boolean;
   submitting: boolean;
   onOpen: () => void;

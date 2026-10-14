@@ -14,6 +14,7 @@ export function useFeederDashboard() {
     const loadFeeders = async () => {
       try {
         const data = await getUserFeeders();
+        console.log("Loaded feeders:", data);
         const nextFeeders = Array.isArray(data) ? data : data ? [data] : [];
 
         setFeeders(nextFeeders);

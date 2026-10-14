@@ -22,7 +22,10 @@ export const getUserFeeders = async () => {
 };
 
 export const getDistance = async (id: string) => {
-    const response = await apiClient.get(`/feeders/${id}/distance`);
+  const response = await apiClient.get(`/feeders/${id}/distance`);
 
   return response.data;
-}
+};
+
+export const getFeederStateExtended = async (id: string) =>
+  (await apiClient.get(`/feeders/${id}/state`)).data;
